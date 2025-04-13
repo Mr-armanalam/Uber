@@ -1,13 +1,25 @@
-import { Image, SafeAreaView, Text, View } from "react-native"
+import { SignOutButton } from '@/components/SignOutButton'
+import { SignedIn, SignedOut, useUser } from '@clerk/clerk-expo'
+import { Link } from 'expo-router'
+import { Text, View } from 'react-native'
 
-const Home = () => {
+export default function Home() {
+  const { user } = useUser()
+
   return (
-    <SafeAreaView>
-      <Text>Home
-        {/* <Image source={require('../assets/images/splash.png')} alt="klj" /> */}
-      </Text>
-    </SafeAreaView>
+    <View>
+      <SignedIn>
+        <Text>Hello {user?.emailAddresses[0].emailAddress}</Text>
+        <SignOutButton />
+      </SignedIn>
+      <SignedOut>
+        <Link href="/(auth)/sign-in">
+          <Text>Sign in</Text>
+        </Link>
+        <Link href="/(auth)/sign-up">
+          <Text>Sign up</Text>
+        </Link>
+      </SignedOut>
+    </View>
   )
 }
-
-export default Home
