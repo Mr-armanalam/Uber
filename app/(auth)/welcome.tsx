@@ -1,4 +1,5 @@
 import CustomButton from "@/components/CustomButton";
+import { SignOutButton } from "@/components/SignOutButton";
 import { onboarding } from "@/constants";
 import { router } from "expo-router";
 import { useRef, useState } from "react";
@@ -20,6 +21,8 @@ const Onboarding = () => {
       >
         <Text className="text-black text-md font-JakartaBold">Skip</Text>
       </TouchableOpacity>
+
+      <SignOutButton />
 
       <Swiper
         ref={swiperRef}
