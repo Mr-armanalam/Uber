@@ -41,7 +41,7 @@ declare interface Ride {
   destination_latitude: number;
   destination_longitude: number;
   ride_time: number;
-  fare_price: number;
+  fare_price: number | string;
   payment_status: string;
   driver_id: number;
   user_email?: string;
