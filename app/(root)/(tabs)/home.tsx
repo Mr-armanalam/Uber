@@ -5,6 +5,7 @@ import { icons, images } from "@/constants";
 import { useLocationStore } from "@/store";
 import { useUser } from "@clerk/clerk-expo";
 import * as Location from "expo-location";
+import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -132,7 +133,14 @@ export default function Home() {
   const [hasPermission, setHasPermission] = useState(false);
 
   const handleSignOut = async () => {};
-  const handleDestinationPress = async () => {};
+  const handleDestinationPress = async (location:{
+    latitude: number;
+    longitude: number;
+    address: string;
+  }) => {
+    setDestinationLocation(location);
+    router.push('/(root)/find-ride');
+  }
 
   useEffect(() => {
     (async () => {
@@ -147,12 +155,12 @@ export default function Home() {
       const address = await Location.reverseGeocodeAsync({
         latitude: location.coords?.latitude!,
         longitude: location.coords?.longitude!,
-      });
+      });      
 
       setUserLocation({
         latitude: location.coords?.latitude!,
         longitude: location.coords?.longitude!,
-        address: `${address[0].name}, ${address[0].region}`,
+        address: `${address[0].formattedAddress}`,
       });
       
     })();
