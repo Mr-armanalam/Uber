@@ -137,7 +137,7 @@ export default function Home() {
     latitude: number;
     longitude: number;
     address: string;
-  }) => {
+  }) => {        
     setDestinationLocation(location);
     router.push('/(root)/find-ride');
   }
@@ -155,7 +155,8 @@ export default function Home() {
       const address = await Location.reverseGeocodeAsync({
         latitude: location.coords?.latitude!,
         longitude: location.coords?.longitude!,
-      });      
+      });  
+            
 
       setUserLocation({
         latitude: location.coords?.latitude!,
@@ -221,12 +222,12 @@ export default function Home() {
                 Your Current Location
               </Text>
               <View className="flex flex-row items-center bg-transparent h-[300px]">
-                {/* <Map /> */}
-                {userLatitude && userLongitude ? (
+                <Map />
+                {/* {userLatitude && userLongitude ? (
                   <Map />
                 ) : (
                   <ActivityIndicator size="large" color="#000" />
-                )}
+                )} */}
               </View>
               <Text className="text-xl font-JakartaBold mt-5 mb-3">
                 Recent Rides

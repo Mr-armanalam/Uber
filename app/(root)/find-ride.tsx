@@ -10,9 +10,12 @@ const FindRide = () => {
   const {
     userAddress,
     destinationAddress,
+    destinationLatitude,
+    destinationLongitude,
     setDestinationLocation,
     setUserLocation,
   } = useLocationStore();
+  
   return (
     <RideLayout title="Ride" snapPoints={['85%']}>
       <View className="my-3">
