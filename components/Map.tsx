@@ -13,7 +13,7 @@ import { icons } from "@/constants";
 import { decodePolyline, useFetch } from "@/lib/fetch";
 
 const Map = () => {
-  const { data: drivers, loading, error } = useFetch<Driver[]>("/(api)/driver");
+  const { data: drivers, loading, error } = useFetch<Driver[]>("/(api)/driver");  
 
   const { selectedDriver, setDrivers } = useDriverStore();
   const [markers, setMarkers] = useState<MarkerData[]>([]);
@@ -78,13 +78,14 @@ const Map = () => {
 
     const json = await response.json();
 
-    const points = json.routes[0]?.overview_polyline?.points;
+    const points = json.routes[0]?.overview_polyline?.points;    
 
     if (!points) return;
 
-    const decodedCoordinates = decodePolyline(points); // You’ll need this
+    const decodedCoordinates = decodePolyline(points); // You’ll need this    
     setRouteCoordinates(decodedCoordinates);
   };
+  
 
   useEffect(() => {
     const getRoute = async () => {
@@ -153,27 +154,8 @@ const Map = () => {
             title="Destination"
             image={icons.pin}
           />
-
-          {/* <MapViewDirection
-            origin={{
-              latitude: userLatitude,
-              longitude: userLongitude,
-            }}
-            destination={{
-              latitude: destinationLatitude,
-              longitude: destinationLongitude,
-            }}
-            apikey={process.env.EXPO_PUBLIC_GOOGLE_API_KEY!}
-            strokeColor="#0286FF"
-            strokeWidth={2}
-          /> */}
         </>
       )}
-      {/* <Polyline
-        coordinates={routeCoordinates}
-        strokeWidth={3}
-        strokeColor="#0286FF"
-      /> */}
     </MapView>
   );
 };
