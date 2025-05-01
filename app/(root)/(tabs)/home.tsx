@@ -1,10 +1,12 @@
 import GoogleTextInput from "@/components/GoogleTextInput";
 import Map from "@/components/Map";
 import RideCard from "@/components/RideCard";
-import { SignOutButton } from "@/components/SignOutButton";
 import { icons, images } from "@/constants";
-import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
-import { Link } from "expo-router";
+import { useLocationStore } from "@/store";
+import { useUser } from "@clerk/clerk-expo";
+import * as Location from "expo-location";
+import { router } from "expo-router";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -20,10 +22,10 @@ const recentRids = [
     ride_id: "1",
     origin_address: "Kathmandu, Nepal",
     destination_address: "Pokhara, Nepal",
-    origin_latitude: "27.717245",
-    origin_longitude: "85.323961",
-    destination_latitude: "28.209583",
-    destination_longitude: "83.985567",
+    origin_latitude: 27.717245,
+    origin_longitude: 85.323961,
+    destination_latitude: 28.209583,
+    destination_longitude: 83.985567,
     ride_time: 391,
     fare_price: "19500.00",
     payment_status: "paid",
@@ -46,10 +48,10 @@ const recentRids = [
     ride_id: "2",
     origin_address: "Jalkot, MH",
     destination_address: "Pune, Maharashtra, India",
-    origin_latitude: "18.609116",
-    origin_longitude: "77.165873",
-    destination_latitude: "18.520430",
-    destination_longitude: "73.856744",
+    origin_latitude: 18.609116,
+    origin_longitude: 77.165873,
+    destination_latitude: 18.520430,
+    destination_longitude: 73.856744,
     ride_time: 491,
     fare_price: "24500.00",
     payment_status: "paid",
@@ -72,10 +74,10 @@ const recentRids = [
     ride_id: "3",
     origin_address: "Zagreb, Croatia",
     destination_address: "Rijeka, Croatia",
-    origin_latitude: "45.815011",
-    origin_longitude: "15.981919",
-    destination_latitude: "45.327063",
-    destination_longitude: "14.442176",
+    origin_latitude: 45.815011,
+    origin_longitude: 15.981919,
+    destination_latitude: 45.327063,
+    destination_longitude: 14.442176,
     ride_time: 124,
     fare_price: "6200.00",
     payment_status: "paid",
@@ -98,10 +100,10 @@ const recentRids = [
     ride_id: "4",
     origin_address: "Okayama, Japan",
     destination_address: "Osaka, Japan",
-    origin_latitude: "34.655531",
-    origin_longitude: "133.919795",
-    destination_latitude: "34.693725",
-    destination_longitude: "135.502254",
+    origin_latitude: 34.655531,
+    origin_longitude: 133.919795,
+    destination_latitude: 34.693725,
+    destination_longitude: 135.502254,
     ride_time: 159,
     fare_price: "7900.00",
     payment_status: "paid",
@@ -122,11 +124,47 @@ const recentRids = [
   },
 ];
 export default function Home() {
+  const { userLatitude, userLongitude } = useLocationStore();
+
+  const { setDestinationLocation, setUserLocation } = useLocationStore();
   const { user } = useUser();
   const loading = true;
 
+  const [hasPermission, setHasPermission] = useState(false);
+
   const handleSignOut = async () => {};
-  const handleDestinationPress = async () => {};
+  const handleDestinationPress = async (location:{
+    latitude: number;
+    longitude: number;
+    address: string;
+  }) => {
+    setDestinationLocation(location);
+    router.push('/(root)/find-ride');
+  }
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setHasPermission(false);
+        return;
+      }
+
+      const location = await Location.getCurrentPositionAsync();
+
+      const address = await Location.reverseGeocodeAsync({
+        latitude: location.coords?.latitude!,
+        longitude: location.coords?.longitude!,
+      });      
+
+      setUserLocation({
+        latitude: location.coords?.latitude!,
+        longitude: location.coords?.longitude!,
+        address: `${address[0].formattedAddress}`,
+      });
+      
+    })();
+  }, []);
 
   return (
     <SafeAreaView className="bg-general-500">
@@ -179,15 +217,19 @@ export default function Home() {
             />
 
             <>
-            
               <Text className="text-xl font-JakartaBold mt-5 mb-3">
-                  Your Current Location
+                Your Current Location
               </Text>
               <View className="flex flex-row items-center bg-transparent h-[300px]">
+                {/* <Map /> */}
+                {userLatitude && userLongitude ? (
                   <Map />
+                ) : (
+                  <ActivityIndicator size="large" color="#000" />
+                )}
               </View>
               <Text className="text-xl font-JakartaBold mt-5 mb-3">
-                  Recent Rides
+                Recent Rides
               </Text>
             </>
           </>
