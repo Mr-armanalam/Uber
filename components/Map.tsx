@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { View, Text } from "react-native";
 import React, { useEffect, useState } from "react";
 import MapView, { Marker, PROVIDER_DEFAULT } from "react-native-maps";
@@ -48,14 +49,44 @@ const drivers = [
 const Map = () => {
   const { selectedDriver, setDrivers } = useDriverStore();
   const [markers, setMarkers] = useState<MarkerData[]>([]);
+=======
+import { View, Text, ActivityIndicator } from "react-native";
+import React, { useEffect, useState } from "react";
+import MapView, { Marker, Polyline, PROVIDER_DEFAULT } from "react-native-maps";
+import { useDriverStore, useLocationStore } from "@/store";
+import MapViewDirection from "react-native-maps-directions";
+import {
+  calculateDriverTimes,
+  calculateRegion,
+  generateMarkersFromData,
+} from "@/lib/map";
+import { Driver, MarkerData } from "@/types/type";
+import { icons } from "@/constants";
+import { decodePolyline, useFetch } from "@/lib/fetch";
+
+const Map = () => {
+  const { data: drivers, loading, error } = useFetch<Driver[]>("/(api)/driver");  
+
+  const { selectedDriver, setDrivers } = useDriverStore();
+  const [markers, setMarkers] = useState<MarkerData[]>([]);
+  const [routeCoordinates, setRouteCoordinates] = useState<
+    { latitude: number; longitude: number }[]
+  >([]);
+>>>>>>> 4ecd12e1b2b9a2b9985ac5bb2c37aac4178dac71
   const {
     userLatitude,
     userLongitude,
     destinationLatitude,
     destinationLongitude,
+<<<<<<< HEAD
     userAddress
   } = useLocationStore();
   
+=======
+    destinationAddress,
+    userAddress,
+  } = useLocationStore();
+>>>>>>> 4ecd12e1b2b9a2b9985ac5bb2c37aac4178dac71
 
   const region = calculateRegion({
     userLatitude,
@@ -65,6 +96,7 @@ const Map = () => {
   });
 
   useEffect(() => {
+<<<<<<< HEAD
     //TODO: REMOVE
     setDrivers(drivers);
     if (Array.isArray(drivers)) {
@@ -74,6 +106,82 @@ const Map = () => {
       setMarkers(newMarkers);
     }
   },[drivers])
+=======
+    const fetchMarkers = async () => {
+      if (!userLatitude || !userLongitude || !Array.isArray(drivers)) return;
+
+      const newMarkers = await generateMarkersFromData({
+        data: drivers,
+        userLatitude,
+        userLongitude,
+      });
+
+      setMarkers(newMarkers);
+    };
+
+    fetchMarkers();
+  }, [drivers, userLatitude, userLongitude]);
+
+  useEffect(() => {
+    if (markers.length > 0 && destinationLatitude && destinationLongitude) {
+      calculateDriverTimes({
+        markers,
+        userLatitude,
+        userLongitude,
+        userAddress,
+        destinationAddress,
+        destinationLatitude,
+        destinationLongitude,
+      }).then((drivers) => {
+        setDrivers(drivers as MarkerData[]);
+      });
+    }
+  }, [markers, destinationLatitude, destinationLongitude]);
+
+  const fetchRoute = async () => {
+    const origin = `${userLatitude},${userLongitude}`;
+    const destination = `${destinationLatitude},${destinationLongitude}`;
+
+    const response = await fetch(
+      `https://maps.gomaps.pro/maps/api/directions/json?origin=${origin}&destination=${destination}&key=${process.env.EXPO_PUBLIC_GOMAP_API_KEY}`
+    );
+
+    const json = await response.json();
+
+    const points = json.routes[0]?.overview_polyline?.points;    
+
+    if (!points) return;
+
+    const decodedCoordinates = decodePolyline(points); // You’ll need this    
+    setRouteCoordinates(decodedCoordinates);
+  };
+  
+
+  useEffect(() => {
+    const getRoute = async () => {
+      if (!userAddress || !destinationAddress) return;
+      await fetchRoute();
+    };
+
+    getRoute();
+  }, [userAddress, destinationAddress]);
+
+  if (loading || !userLatitude || !userLongitude) {
+    return (
+      <View className="flex justify-between items-center w-full">
+        <ActivityIndicator size={"small"} color={"#000"} />
+      </View>
+    );
+  }
+  if (error) {
+    return (
+      <View className="flex justify-between items-center w-full">
+        <Text> Error: {error}</Text>
+      </View>
+    );
+  }
+
+>>>>>>> 4ecd12e1b2b9a2b9985ac5bb2c37aac4178dac71
   return (
     <MapView
       provider={PROVIDER_DEFAULT}
@@ -94,11 +202,39 @@ const Map = () => {
           }}
           title={marker.title}
           description={`${marker.first_name} ${marker.last_name}`}
+<<<<<<< HEAD
           image={selectedDriver === marker.id ? icons.selectedMarker : icons.marker}
         >
 
         </Marker>
       ))}
+=======
+          image={
+            selectedDriver === marker.id ? icons.selectedMarker : icons.marker
+          }
+        ></Marker>
+      ))}
+      {destinationLatitude && destinationLongitude && (
+        <>
+          {routeCoordinates.length > 0 && (
+            <Polyline
+              coordinates={routeCoordinates}
+              strokeColor="#0286FF"
+              strokeWidth={4}
+            />
+          )}
+          <Marker
+            key={"destination"}
+            coordinate={{
+              latitude: destinationLatitude,
+              longitude: destinationLongitude,
+            }}
+            title="Destination"
+            image={icons.pin}
+          />
+        </>
+      )}
+>>>>>>> 4ecd12e1b2b9a2b9985ac5bb2c37aac4178dac71
     </MapView>
   );
 };

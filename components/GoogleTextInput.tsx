@@ -98,7 +98,11 @@ const GoogleTextInput = ({
                   const data = await response.json();
                   handlePress({
                     latitude: data?.result.geometry.location.lat,
+<<<<<<< HEAD
                     longitude: data?.result.geometry.lng,
+=======
+                    longitude: data?.result.geometry.location.lng,
+>>>>>>> 4ecd12e1b2b9a2b9985ac5bb2c37aac4178dac71
                     address: data?.result.formatted_address,
                   });
                   setSuggestions([]);

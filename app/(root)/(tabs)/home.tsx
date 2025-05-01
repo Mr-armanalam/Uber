@@ -137,7 +137,11 @@ export default function Home() {
     latitude: number;
     longitude: number;
     address: string;
+<<<<<<< HEAD
   }) => {
+=======
+  }) => {        
+>>>>>>> 4ecd12e1b2b9a2b9985ac5bb2c37aac4178dac71
     setDestinationLocation(location);
     router.push('/(root)/find-ride');
   }
@@ -155,7 +159,12 @@ export default function Home() {
       const address = await Location.reverseGeocodeAsync({
         latitude: location.coords?.latitude!,
         longitude: location.coords?.longitude!,
+<<<<<<< HEAD
       });      
+=======
+      });  
+            
+>>>>>>> 4ecd12e1b2b9a2b9985ac5bb2c37aac4178dac71
 
       setUserLocation({
         latitude: location.coords?.latitude!,
@@ -221,12 +230,21 @@ export default function Home() {
                 Your Current Location
               </Text>
               <View className="flex flex-row items-center bg-transparent h-[300px]">
+<<<<<<< HEAD
                 {/* <Map /> */}
                 {userLatitude && userLongitude ? (
                   <Map />
                 ) : (
                   <ActivityIndicator size="large" color="#000" />
                 )}
+=======
+                <Map />
+                {/* {userLatitude && userLongitude ? (
+                  <Map />
+                ) : (
+                  <ActivityIndicator size="large" color="#000" />
+                )} */}
+>>>>>>> 4ecd12e1b2b9a2b9985ac5bb2c37aac4178dac71
               </View>
               <Text className="text-xl font-JakartaBold mt-5 mb-3">
                 Recent Rides

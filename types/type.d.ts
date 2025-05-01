@@ -13,7 +13,7 @@ declare interface Driver {
 declare interface MarkerData {
   latitude: number;
   longitude: number;
-  id: number;
+  id?: number | undefined;
   title: string;
   profile_image_url: string;
   car_image_url: string;
@@ -23,6 +23,8 @@ declare interface MarkerData {
   last_name: string;
   time?: number;
   price?: string;
+  markerAddress?: string;
+  placeId?: string;
 }
 
 declare interface MapProps {
