@@ -1,4 +1,4 @@
-import { useAuth } from "@clerk/clerk-expo";
+import { SignedOut, useAuth } from "@clerk/clerk-expo";
 import { Redirect } from "expo-router";
 
 const Home = () => {

@@ -8,6 +8,7 @@ import { Alert, Image, ScrollView, Text, View } from "react-native";
 import { useSignUp } from "@clerk/clerk-expo";
 import { Link, useRouter } from "expo-router";
 import ReactNativeModal from "react-native-modal";
+import { fetchAPI } from "@/lib/fetch";
 
 const SignUp = () => {
   const { isLoaded, signUp, setActive } = useSignUp();
@@ -57,7 +58,17 @@ const SignUp = () => {
 
       // If verification was completed, set the session to active and redirect the user
       if (signUpAttempt.status === "complete") {
-        // TODO: Createe a database user!
+        await fetchAPI('/(api)/user', {
+          method: 'POST',
+          body: JSON.stringify({
+            email: form.email,
+            name: form.name,
+            clerkId: signUpAttempt.createdUserId,
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
         await setActive({ session: signUpAttempt.createdSessionId });
         setVerification({ ...verification, state: "success" });
       } else {
